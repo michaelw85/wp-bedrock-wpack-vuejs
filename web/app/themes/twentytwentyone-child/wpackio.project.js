@@ -1,4 +1,5 @@
 const pkg = require('./package.json');
+const { VueLoaderPlugin } = require("vue-loader");
 
 module.exports = {
 	// Project Identity
@@ -23,24 +24,44 @@ module.exports = {
 			name: 'app',
 			entry: {
 				// mention each non-interdependent files as entry points
-		     // The keys of the object will be used to generate filenames
-		     // The values can be string or Array of strings (string|string[])
-		     // But unlike webpack itself, it can not be anything else
-		     // <https://webpack.js.org/concepts/#entry>
-		     // You do not need to worry about file-size, because we would do
-		     // code splitting automatically. When using ES6 modules, forget
-		     // global namespace pollutions 😉
+                // The keys of the object will be used to generate filenames
+                // The values can be string or Array of strings (string|string[])
+                // But unlike webpack itself, it can not be anything else
+                // <https://webpack.js.org/concepts/#entry>
+                // You do not need to worry about file-size, because we would do
+                // code splitting automatically. When using ES6 modules, forget
+                // global namespace pollutions 😉
 				// vendor: './src/mobile/vendor.js', // Could be a string
 				main: ['./ts/main.ts'], // Or an array of string (string[])
 			},
-		// If enabled, all WordPress provided external scripts, including React
-		// and ReactDOM are aliased automatically. Do note that all `@wordpress`
-		// namespaced imports are automatically aliased and enqueued by the
-		// PHP library. It will not change the JSX pragma because of external
-		// dependencies.
-		optimizeForGutenberg: false,
+            // If enabled, all WordPress provided external scripts, including React
+            // and ReactDOM are aliased automatically. Do note that all `@wordpress`
+            // namespaced imports are automatically aliased and enqueued by the
+            // PHP library. It will not change the JSX pragma because of external
+            // dependencies.
+            optimizeForGutenberg: false,
 			// Extra webpack config to be passed directly
-			webpackConfig: undefined,
+            webpackConfig: {
+                module: {
+                    rules: [
+                        {
+                            test: /\.vue$/,
+                            loader: "vue-loader",
+                            options: {
+                                esModule: true,
+                            },
+                        },
+                        {
+                            test: /\.ts$/,
+                            loader: "ts-loader",
+                            options: {
+                                appendTsSuffixTo: [/\.vue$/],
+                            },
+                        },
+                    ],
+                },
+                plugins: [new VueLoaderPlugin()],
+            },
 		},
 		// If has more length, then multi-compiler
 	],
@@ -57,7 +78,7 @@ module.exports = {
 	// Disable react refresh
 	disableReactRefresh: false,
 	// Needs sass?
-	hasSass: false,
+	hasSass: true,
 	// Needs less?
 	hasLess: false,
 	// Needs flowtype?
@@ -67,9 +88,19 @@ module.exports = {
 	externals: {
 		jquery: 'jQuery',
 	},
+    tsBabelOverride: (defaults) => ({
+        ...defaults,
+        presets: ["babel-preset-typescript-vue"],
+        plugins: [
+            ["@babel/proposal-decorators", { legacy: true }],
+            ["@babel/proposal-class-properties", { loose: true }],
+        ],
+    }),
 	// Webpack Aliases
 	// <https://webpack.js.org/configuration/resolve/#resolve-alias>
-	alias: undefined,
+    alias: {
+        vue$: "vue/dist/vue.esm.js",
+    },
 	// Show overlay on development
 	errorOverlay: true,
 	// Auto optimization by webpack
