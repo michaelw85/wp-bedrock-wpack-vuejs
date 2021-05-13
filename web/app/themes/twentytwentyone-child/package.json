@@ -1,0 +1,23 @@
+{
+  "name": "twentytwentyone-child",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "bootstrap": "wpackio-scripts bootstrap",
+    "build": "wpackio-scripts build",
+    "start": "wpackio-scripts start",
+    "archive": "wpackio-scripts pack"
+  },
+  "author": "Michael Withagen",
+  "license": "ISC",
+  "devDependencies": {
+    "@wpackio/scripts": "^6.2.0",
+    "fork-ts-checker-webpack-plugin": "^6.2.7",
+    "postcss": "^8.2.15",
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "@wpackio/entrypoint": "^6.0.1"
+  }
+}
